@@ -1,6 +1,6 @@
 const express = require("express")
 const path = require("path")
-const { readFromFile, readAndAppend } = require('./helper/fsUtils');
+const { readFromFile, writeToFile, readAndAppend } = require('./helper/fsUtils');
 
 const app = express()
 app.use(express.json());
@@ -25,6 +25,22 @@ app.post('/api/notes', (req, res) => {
 });
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, './public/notes.html'));
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+  const noteId = req.params.id;
+  
+  readFromFile('./db/db.json').then((data)=>{
+    const notes = JSON.parse(data);
+  })
+  // Find the note in your data source (e.g., array or database) based on the ID
+  const updatedNotes = notes.filter((note) => note.id !== parseInt(noteId));
+
+  // Write the updated notes back to the data source
+  writeToFile('./db/db.json', updatedNotes);
+
+  // Respond with the updated notes
+  res.json(updatedNotes);
 });
 
 app.listen(PORT, ()=> console.log(`APP listening on port ${PORT}`));

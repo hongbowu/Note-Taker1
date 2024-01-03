@@ -28,6 +28,11 @@ const hide = (elem) => {
 
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
+let id;
+
+const uuid = () => {
+  return Math.floor(Math.random() * 1000);
+}
 
 const getNotes = () =>
   fetch('/api/notes', {
@@ -76,7 +81,8 @@ const renderActiveNote = () => {
 const handleNoteSave = () => {
   const newNote = {
     title: noteTitle.value,
-    text: noteText.value
+    text: noteText.value,
+    id: uuid()
   };
   saveNote(newNote).then(() => {
     getAndRenderNotes();
